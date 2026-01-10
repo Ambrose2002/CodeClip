@@ -15,3 +15,12 @@ def create_user(email, password):
     db.session.add(user)
     db.session.commit()
     return True, user
+
+def verify_user(email, password):
+    
+    user = Users.query.filter(Users.email == email).first()
+    
+    if user is None or not user.check_password(password):
+        return False, None
+    return True, user
+        

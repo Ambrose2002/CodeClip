@@ -18,6 +18,9 @@ class Users(db.Model):
         self.email = kwargs.get("email")
         self.date_created = datetime.now()
         self.password_digiest = bcrypt.hashpw(kwargs.get("password"))
+        
+    def check_password(self, password) -> bool:
+        return bcrypt.checkpw(password.encode("utf-8"), self.password_digest)
 
     def serialize(self):
         return {
