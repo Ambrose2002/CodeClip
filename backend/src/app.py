@@ -1,4 +1,3 @@
-import json
 from db import db
 from flask import Flask
 
