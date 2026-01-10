@@ -1,7 +1,7 @@
 from db import db
 import json
 from flask import Flask, session, request
-from users_dao import create_user
+from users_dao import create_user, verify_user
 
 app = Flask(__name__)
 
@@ -47,3 +47,28 @@ def signup():
         return success_response(user.serialize())
 
     return failure_response("User with email: " + email + " already exists", 400)
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    body = json.loads(request.data)
+    body = json.loads(request.data)
+    if not body:
+        return failure_response("request body required", 400)
+
+    email, password = body.get("email"), body.get("password")
+
+    if not email:
+        return failure_response("Invalid body. email required", 400)
+    if not password:
+        return failure_response("Invalid body. password required", 400)
+    
+    success, user = verify_user(email, password)
+    
+    if not success:
+        return failure_response("error logging in", 400)
+    
+    if user:
+        session["user_id"] = user.id
+        return success_response(user.serialize(), 200)
+    return failure_response("error logging in", 400)
