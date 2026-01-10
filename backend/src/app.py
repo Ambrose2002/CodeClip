@@ -2,7 +2,7 @@ from db import db
 import json
 from flask import Flask, session, request
 from users_dao import create_user, verify_user
-from clips_dao import get_all_clips, add_clip
+from clips_dao import get_all_clips, add_clip, get_clip_by_id
 
 app = Flask(__name__)
 
@@ -108,3 +108,11 @@ def add():
         return success_response(clip.serialize(), 200)
 
     return failure_response("error adding clip", 400)
+
+
+@app.route("api/get/clip/<int:clip_id>", methods=["GET"])
+def get_clip(clip_id):
+    user_id = session["user_id"]
+    if not user_id:
+        return failure_response("Unauthorized", 401)
+    return success_response(get_clip_by_id(user_id, clip_id), 200)
