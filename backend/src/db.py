@@ -34,6 +34,7 @@ class Clips(db.Model):
     language = db.Column(db.String, nullable=True)
     date_created = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     source = db.Column(db.String, nullable=False)
+    title = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     def __init__(self, **kwargs):
@@ -47,6 +48,7 @@ class Clips(db.Model):
         return {
             "id": self.id,
             "text": self.text,
+            "title": self.title,
             "language": self.language,
             "date_created": self.date_created.isoformat(),
             "source": self.source,
