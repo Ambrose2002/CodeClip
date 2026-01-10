@@ -38,8 +38,9 @@ class Clips(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     def __init__(self, **kwargs):
-        self.user = kwargs.get("userId")
+        self.user = kwargs.get("user_id")
         self.text = kwargs.get("text")
+        self.title = kwargs.get("title")
         self.language = kwargs.get("language")
         self.date_created = datetime.now()
         self.source = kwargs.get("source")

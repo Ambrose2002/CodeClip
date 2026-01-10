@@ -24,3 +24,11 @@ def verify_user(email, password):
         return False, None
     return True, user
         
+        
+def get_user_by_id(user_id):
+    
+    user = Users.query.filter(Users.id == user_id).first()
+    
+    if user:
+        return True, user
+    return False, None

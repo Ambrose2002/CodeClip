@@ -2,7 +2,7 @@ from db import db
 import json
 from flask import Flask, session, request
 from users_dao import create_user, verify_user
-from clips_dao import getAllClips
+from clips_dao import get_all_clips, add_clip
 
 app = Flask(__name__)
 
@@ -63,12 +63,12 @@ def login():
         return failure_response("Invalid body. email required", 400)
     if not password:
         return failure_response("Invalid body. password required", 400)
-    
+
     success, user = verify_user(email, password)
-    
+
     if not success:
         return failure_response("error logging in", 400)
-    
+
     if user:
         session["user_id"] = user.id
         return success_response(user.serialize(), 200)
@@ -76,11 +76,35 @@ def login():
 
 
 @app.route("/api/get/clips")
-def getClips():
+def get_clips():
     user_id = session["user_id"]
-    
+
     if not user_id:
         return failure_response("Unauthorized", 401)
-    
-    return success_response(getAllClips(user_id), 200)
 
+    return success_response(get_all_clips(user_id), 200)
+
+
+@app.route("api/post/clip", methods=["POST"])
+def add():
+    user_id = session["user_id"]
+    if not user_id:
+        return failure_response("Unauthorized", 401)
+
+    body = json.loads(request.data)
+    if not body:
+        return failure_response("invalid body", 400)
+    text = body.get("text")
+    title = body.get("title")
+    language = body.get("language")
+    source = body.get("source")
+
+    if not text or not title or not language or not source:
+        return failure_response("invalid body", 400)
+
+    success, clip = add_clip(user_id, text, language, source, title)
+
+    if success and clip:
+        return success_response(clip.serialize(), 200)
+
+    return failure_response("error adding clip", 400)

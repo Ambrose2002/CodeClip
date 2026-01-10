@@ -1,9 +1,24 @@
 from db import Clips, db
+from users_dao import get_user_by_id
 
-def getAllClips(user_id):
+def get_all_clips(user_id):
     
     clips = Clips.query.filter(Clips.user_id == user_id).all()
     
-    return clips
+    if clips:
+        return [clip.serialize() for clip in clips]
+    return []
 
 
+def add_clip(user_id, text, language, source, title):
+    
+    success, user = get_user_by_id(user_id)
+    
+    if success and user:
+        clip = Clips(text = text, title = title, language = language, source = source, user_id = user.id)
+        db.session.add(clip)
+        db.session.commit()
+        
+        return True, clip
+    
+    return False, None
