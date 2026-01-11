@@ -44,8 +44,8 @@ def signup():
 
     created, user = create_user(email, password)
 
-    if created:
-        assert user is not None
+    if created and user:
+        session["user_id"] = user.id
         return success_response([user.serialize()])
 
     return failure_response("User with email: " + email + " already exists", 400)

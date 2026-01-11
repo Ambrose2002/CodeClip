@@ -19,13 +19,13 @@ class Users(db.Model):
         assert password is not None
         self.email = kwargs.get("email")
         self.date_created = datetime.now()
-        self.password_digiest = generate_password_hash(password)
+        self.password_digest = generate_password_hash(password)
 
     def check_password(self, password) -> bool:
         return check_password_hash(password.encode("utf-8"), self.password_digest)
 
     def serialize(self):
-        return {"id": self.id, "email": self.email, "date_created": self.date_created}
+        return {"id": self.id, "email": self.email, "date_created": self.date_created.isoformat()}
 
 
 class Clips(db.Model):
