@@ -22,7 +22,7 @@ class Users(db.Model):
         self.password_digest = generate_password_hash(password)
 
     def check_password(self, password) -> bool:
-        return check_password_hash(password.encode("utf-8"), self.password_digest)
+        return check_password_hash(self.password_digest, password)
 
     def serialize(self):
         return {"id": self.id, "email": self.email, "date_created": self.date_created.isoformat()}
@@ -40,7 +40,7 @@ class Clips(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     def __init__(self, **kwargs):
-        self.user = kwargs.get("user_id")
+        self.user_id = kwargs.get("user_id")
         self.text = kwargs.get("text")
         self.title = kwargs.get("title")
         self.language = kwargs.get("language")

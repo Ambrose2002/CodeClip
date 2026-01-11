@@ -1,12 +1,15 @@
 import os
+from dotenv import load_dotenv
 from db import db
 import json
 from flask import Flask, session, request
 from users_dao import create_user, verify_user
 from clips_dao import get_all_clips, add_clip, get_clip_by_id
 
+load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY")
+app.secret_key = os.environ["FLASK_SECRET_KEY"]
 
 db_filename = "codeclip.db"
 
@@ -84,7 +87,7 @@ def logout():
 
 @app.route("/api/get/clips")
 def get_clips():
-    user_id = session["user_id"]
+    user_id = session.get("user_id")
 
     if not user_id:
         return failure_response("Unauthorized", 401)
@@ -93,14 +96,17 @@ def get_clips():
 
 
 @app.route("/api/post/clip", methods=["POST"])
-def add():
-    user_id = session["user_id"]
+def add_single_clip():
+    user_id = session.get("user_id")
     if not user_id:
         return failure_response("Unauthorized", 401)
 
+    if not request.data:
+        return failure_response("invalid request body", 400)
+
     body = json.loads(request.data)
     if not body:
-        return failure_response("invalid body", 400)
+        return failure_response("invalid request body", 400)
     text = body.get("text")
     title = body.get("title")
     language = body.get("language")
@@ -119,7 +125,7 @@ def add():
 
 @app.route("/api/get/clip/<int:clip_id>", methods=["GET"])
 def get_clip(clip_id):
-    user_id = session["user_id"]
+    user_id = session.get("user_id")
     if not user_id:
         return failure_response("Unauthorized", 401)
     return success_response(get_clip_by_id(user_id, clip_id), 200)
