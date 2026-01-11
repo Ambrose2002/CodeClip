@@ -128,7 +128,10 @@ def get_clip(clip_id):
     user_id = session.get("user_id")
     if not user_id:
         return failure_response("Unauthorized", 401)
-    return success_response(get_clip_by_id(user_id, clip_id), 200)
+    clip = get_clip_by_id(user_id, clip_id)
+    if clip:
+        return success_response(clip, 200)
+    return failure_response("clip not found", 404)
 
 
 if __name__ == "__main__":
