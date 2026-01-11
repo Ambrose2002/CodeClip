@@ -92,7 +92,7 @@ def get_clips():
     return success_response(get_all_clips(user_id), 200)
 
 
-@app.route("api/post/clip", methods=["POST"])
+@app.route("/api/post/clip", methods=["POST"])
 def add():
     user_id = session["user_id"]
     if not user_id:
@@ -117,9 +117,13 @@ def add():
     return failure_response("error adding clip", 400)
 
 
-@app.route("api/get/clip/<int:clip_id>", methods=["GET"])
+@app.route("/api/get/clip/<int:clip_id>", methods=["GET"])
 def get_clip(clip_id):
     user_id = session["user_id"]
     if not user_id:
         return failure_response("Unauthorized", 401)
     return success_response(get_clip_by_id(user_id, clip_id), 200)
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000, debug=True)

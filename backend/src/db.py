@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import bcrypt  # type: ignore
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -15,12 +15,14 @@ class Users(db.Model):
     clips = db.relationship("Clips", cascade="delete")
 
     def __init__(self, **kwargs):
+        password = kwargs.get("password")
+        assert password is not None
         self.email = kwargs.get("email")
         self.date_created = datetime.now()
-        self.password_digiest = bcrypt.hashpw(kwargs.get("password"))
+        self.password_digiest = generate_password_hash(password)
 
     def check_password(self, password) -> bool:
-        return bcrypt.checkpw(password.encode("utf-8"), self.password_digest)
+        return check_password_hash(password.encode("utf-8"), self.password_digest)
 
     def serialize(self):
         return {"id": self.id, "email": self.email, "date_created": self.date_created}
