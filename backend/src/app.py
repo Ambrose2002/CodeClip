@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from db import db
 import json
 from flask import Flask, session, request
-from users_dao import create_user, verify_user
+from users_dao import create_user, verify_user, user_exists, get_user_by_id
 from clips_dao import get_all_clips, add_clip, get_clip_by_id
 
 load_dotenv()
@@ -67,25 +67,34 @@ def signup():
 def login():
     body = json.loads(request.data)
     body = json.loads(request.data)
+
     if not body:
         return failure_response("request body required", 400)
 
     email, password = body.get("email"), body.get("password")
+
+    if "user_id" in session:
+        user_id = session.get("user_id")
+        success, user = get_user_by_id(user_id)
+        if success and user and user.email == email:
+            return failure_response(f"user is with email {email} is already logged in", 400)
+        
 
     if not email:
         return failure_response("Invalid body. email required", 400)
     if not password:
         return failure_response("Invalid body. password required", 400)
 
+    exists = user_exists(email)
+    if not exists:
+        return failure_response(f"user with email {email} does not exist", 400)
+
     success, user = verify_user(email, password)
 
-    if not success:
-        return failure_response("error logging in", 400)
-
-    if user:
+    if success and user:
         session["user_id"] = user.id
         return success_response([user.serialize()], 200)
-    return failure_response("error logging in", 400)
+    return failure_response("password is incorrect", 400)
 
 
 @app.route("/api/logout", methods=["GET"])
