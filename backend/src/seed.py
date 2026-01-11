@@ -10,11 +10,11 @@ with app.app_context():
     db.create_all()
 
     print("Seeding users...")
-    user1 = Users(email="ab123@gmail.com", password="ab123")
-    user2 = Users(email="test@gmail.com", password="ab123")
-    user3 = Users(email="john@gmail.com", password="ab123")
-    user4 = Users(email="jane@gmail.com", password="ab123")
-    user5 = Users(email="dev@gmail.com", password="ab123")
+    user1 = Users(email="u1@gmail.com", password="ab123")
+    user2 = Users(email="u2@gmail.com", password="ab123")
+    user3 = Users(email="u3@gmail.com", password="ab123")
+    user4 = Users(email="u4@gmail.com", password="ab123")
+    user5 = Users(email="u5@gmail.com", password="ab123")
 
     db.session.add_all([user1, user2, user3, user4, user5])
 
@@ -84,24 +84,140 @@ with app.app_context():
             "language": "javascript",
             "source": "MDN Web Docs",
         },
+        {
+            "text": "def is_palindrome(s):\n    return s == s[::-1]",
+            "title": "Check Palindrome",
+            "language": "python",
+            "source": "https://dev.to/codewizard/palindrome-check-python",
+        },
+        {
+            "text": "const sum = arr => arr.reduce((a, b) => a + b, 0);",
+            "title": "Sum Array",
+            "language": "javascript",
+            "source": "https://www.javascripttutorial.net/array/reduce",
+        },
+        {
+            "text": "SELECT email FROM users WHERE email LIKE '%@gmail.com';",
+            "title": "Find Gmail Users",
+            "language": "sql",
+            "source": "https://www.sqltutorial.org/sql-like",
+        },
+        {
+            "text": "public boolean isEven(int n) {\n    return n % 2 == 0;\n}",
+            "title": "Check Even Number",
+            "language": "java",
+            "source": "https://www.baeldung.com/java-even-odd",
+        },
+        {
+            "text": "func max(a, b int) int {\n    if a > b { return a }\n    return b\n}",
+            "title": "Max of Two Numbers",
+            "language": "go",
+            "source": "https://gobyexample.com/if-else",
+        },
+        {
+            "text": "let reversed = [...str].reverse().join('');",
+            "title": "Reverse String",
+            "language": "javascript",
+            "source": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse",
+        },
+        {
+            "text": "def factorial(n):\n    return 1 if n == 0 else n * factorial(n-1)",
+            "title": "Factorial Function",
+            "language": "python",
+            "source": "https://www.programiz.com/python-programming/examples/factorial",
+        },
+        {
+            "text": "CREATE INDEX idx_users_email ON users(email);",
+            "title": "Create Email Index",
+            "language": "sql",
+            "source": "https://use-the-index-luke.com/sql/creating-indexes",
+        },
+        {
+            "text": "std::vector<int> nums = {1,2,3,4};",
+            "title": "Vector Initialization",
+            "language": "cpp",
+            "source": "https://en.cppreference.com/w/cpp/container/vector",
+        },
+        {
+            "text": "let unique = Array.from(new Set(arr));",
+            "title": "Remove Duplicates",
+            "language": "javascript",
+            "source": "https://www.javascripttutorial.net/es6/javascript-set",
+        },
+        {
+            "text": "fn square(x: i32) -> i32 { x * x }",
+            "title": "Square Function",
+            "language": "rust",
+            "source": "https://doc.rust-lang.org/book/ch03-03-how-functions-work.html",
+        },
+        {
+            "text": "def flatten(lst):\n    return [item for sublist in lst for item in sublist]",
+            "title": "Flatten List",
+            "language": "python",
+            "source": "https://realpython.com/python-flatten-list",
+        },
+        {
+            "text": "SELECT COUNT(*) FROM orders WHERE status = 'pending';",
+            "title": "Count Pending Orders",
+            "language": "sql",
+            "source": "https://www.sqlshack.com/sql-count-function",
+        },
+        {
+            "text": "let now = new Date().toISOString();",
+            "title": "Get ISO Date",
+            "language": "javascript",
+            "source": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString",
+        },
+        {
+            "text": "public static int clamp(int x, int min, int max) {\n    return Math.max(min, Math.min(x, max));\n}",
+            "title": "Clamp Value",
+            "language": "java",
+            "source": "https://stackoverflow.com/questions/9898512/clamping-values-in-java",
+        },
+        {
+            "text": "curl -X GET https://api.example.com/users",
+            "title": "API Request",
+            "language": "bash",
+            "source": "https://curl.se/docs/httpscripting.html",
+        },
+        {
+            "text": "type User = { id: number; name: string }",
+            "title": "User Type",
+            "language": "typescript",
+            "source": "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html",
+        },
+        {
+            "text": 'var body: some View { Text("Hello") }',
+            "title": "SwiftUI Text View",
+            "language": "swift",
+            "source": "https://developer.apple.com/tutorials/swiftui",
+        },
+        {
+            "text": "if (x === null) throw new Error('Missing value');",
+            "title": "Null Check",
+            "language": "javascript",
+            "source": "https://javascript.info/error-handling",
+        },
+        {
+            "text": "def chunk(lst, size):\n    return [lst[i:i+size] for i in range(0, len(lst), size)]",
+            "title": "Chunk List",
+            "language": "python",
+            "source": "https://www.geeksforgeeks.org/break-list-chunks-size-n-python",
+        },
     ]
 
     users = [user1, user2, user3, user4, user5]
 
-    for idx, user in enumerate(users):
-        if idx == 4:  # user5 has no clips
-            continue
-        num_clips = random.randint(1, 10)
-        for _ in range(num_clips):
-            clip_data = random.choice(clip_samples)
-            clip = Clips(
-                text=clip_data["text"],
-                title=clip_data["title"],
-                language=clip_data["language"],
-                source=clip_data["source"],
-                user_id=user.id,
-            )
-            db.session.add(clip)
+    for idx, clip in enumerate(clip_samples):
+        user_id = random.randint(1, len(users))
+        clip_object = Clips(
+            text=clip["text"],
+            title=clip["title"],
+            language=clip["language"],
+            source=clip["source"],
+            user_id=user_id,
+        )
+        db.session.add(clip_object)
 
     db.session.commit()
     print("Clips seeded successfully!")
