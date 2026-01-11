@@ -1,3 +1,4 @@
+import os
 from db import db
 import json
 from flask import Flask, session, request
@@ -5,6 +6,7 @@ from users_dao import create_user, verify_user
 from clips_dao import get_all_clips, add_clip, get_clip_by_id
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY")
 
 db_filename = "codeclip.db"
 
