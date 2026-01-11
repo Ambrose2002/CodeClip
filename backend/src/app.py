@@ -21,12 +21,11 @@ with app.app_context():
 
 
 def success_response(data, code=200):
-
-    return json.dumps(data), code
+    return json.dumps({"ok": True, "data": data, "error": ""}), code
 
 
 def failure_response(message, code=404):
-    return json.dumps({"error": message}), code
+    return json.dumps({"ok": False, "data": [],"error": message}), code
 
 
 @app.route("/api/signup", methods=["POST"])
@@ -47,7 +46,7 @@ def signup():
 
     if created:
         assert user is not None
-        return success_response(user.serialize())
+        return success_response([user.serialize()])
 
     return failure_response("User with email: " + email + " already exists", 400)
 
@@ -73,8 +72,14 @@ def login():
 
     if user:
         session["user_id"] = user.id
-        return success_response(user.serialize(), 200)
+        return success_response([user.serialize()], 200)
     return failure_response("error logging in", 400)
+
+
+@app.route("/api/logout", methods=["GET"])
+def logout():
+    session.clear()
+    return success_response([], 200)
 
 
 @app.route("/api/get/clips")
@@ -107,7 +112,7 @@ def add():
     success, clip = add_clip(user_id, text, language, source, title)
 
     if success and clip:
-        return success_response(clip.serialize(), 200)
+        return success_response([clip.serialize()], 200)
 
     return failure_response("error adding clip", 400)
 

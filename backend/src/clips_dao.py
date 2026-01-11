@@ -2,7 +2,7 @@ from db import Clips, db
 from users_dao import get_user_by_id
 
 
-def get_all_clips(user_id):
+def get_all_clips(user_id) -> list:
 
     clips = Clips.query.filter(Clips.user_id == user_id).all()
 
@@ -11,7 +11,7 @@ def get_all_clips(user_id):
     return []
 
 
-def get_clip_by_id(user_id, clip_id):
+def get_clip_by_id(user_id, clip_id) -> list:
 
     clip = Clips.query.filter(Clips.user_id == user_id and Clips.id == clip_id).first()
 
