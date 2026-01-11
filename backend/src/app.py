@@ -8,10 +8,19 @@ from clips_dao import get_all_clips, add_clip, get_clip_by_id
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    instance_path=os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "../instance")
+    ),
+)
+
+# Create instance directory if it doesn't exist
+os.makedirs(app.instance_path, exist_ok=True)
+
 app.secret_key = os.environ["FLASK_SECRET_KEY"]
 
-db_filename = "codeclip.db"
+db_filename = os.path.join(app.instance_path, "codeclip.db")
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///%s" % db_filename
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -28,7 +37,7 @@ def success_response(data, code=200):
 
 
 def failure_response(message, code=404):
-    return json.dumps({"ok": False, "data": [],"error": message}), code
+    return json.dumps({"ok": False, "data": [], "error": message}), code
 
 
 @app.route("/api/signup", methods=["POST"])
