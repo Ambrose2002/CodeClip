@@ -50,6 +50,7 @@ class Clips(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "user_id": self.user_id,
             "text": self.text,
             "title": self.title,
             "language": self.language,
