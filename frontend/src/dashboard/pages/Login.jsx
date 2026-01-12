@@ -1,8 +1,10 @@
 import react, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -34,6 +36,7 @@ function Login() {
                 const data = await response.json()
 
                 console.log(data)
+                navigate('/')
             } catch (error) {
                 console.log(error)
             }
@@ -45,12 +48,12 @@ function Login() {
     return (
         <form onSubmit={handleSubmit}>
             <label >
-                Email: 
+                Email:
                 <input type="email" value={email} onChange={handleEmailChange} />
             </label>
 
             <label >
-                Password: 
+                Password:
                 <input type="password" value={password} onChange={handlePasswordChange} />
             </label>
 
