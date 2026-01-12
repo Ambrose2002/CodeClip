@@ -7,9 +7,9 @@ export default function Popup() {
 
     return (
         <div style={{ width: 300, padding: 12 }}>
-            <h3>Snippet Saver</h3>
+            <h3>CodeClip</h3>
             <button onClick={openDashboard}>
-                Open Snippet Library
+                Open CodeCLip Library
             </button>
         </div>
     )
