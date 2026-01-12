@@ -1,3 +1,27 @@
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom"
+import Login from "./pages/Login"
+import RequireAuth from "../shared/auth/RequireAuth"
+
+// import Login from "./pages/Login"
+// import Signup from "./pages/Signup"
+import SnippetList from "./pages/SnippetList"
+// import SnippetCreate from "./pages/SnippetCreate"
+// import SnippetView from "./pages/SnippetView"
+
 export default function App() {
-    return <h1>Snippet Dashboard</h1>
+    return (
+        <HashRouter>
+            <Routes>
+                <Route path="/login" element={<Login />}></Route>
+                <Route
+                    path="/"
+                    element={
+                        <RequireAuth>
+                            <SnippetList />
+                        </RequireAuth>
+                    }
+                ></Route>
+            </Routes>
+        </HashRouter>
+    )
 }
