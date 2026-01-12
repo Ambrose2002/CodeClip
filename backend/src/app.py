@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import json
-from flask import Flask, session, request
+from flask import Flask, session, request, make_response
 from flask_cors import CORS
 
 from db import db
@@ -102,7 +102,9 @@ def login():
 @app.route("/api/logout", methods=["GET"])
 def logout():
     session.clear()
-    return success_response([], 200)
+    resp = make_response({"ok": True})
+    resp.delete_cookie("session")
+    return resp
 
 
 @app.route("/api/me", methods=["GET"])
