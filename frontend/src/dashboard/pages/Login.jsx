@@ -1,5 +1,5 @@
 import react, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../shared/auth/AuthContext';
 
 function Login() {
@@ -31,20 +31,23 @@ function Login() {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            {error && <div style={{ color: 'red' }}>{error}</div>}
-            <label >
-                Email:
-                <input type="email" value={email} onChange={handleEmailChange} />
-            </label>
+        <div>
+            <form onSubmit={handleSubmit}>
+                {error && <div style={{ color: 'red' }}>{error}</div>}
+                <label >
+                    Email:
+                    <input type="email" value={email} onChange={handleEmailChange} />
+                </label>
 
-            <label >
-                Password:
-                <input type="password" value={password} onChange={handlePasswordChange} />
-            </label>
+                <label >
+                    Password:
+                    <input type="password" value={password} onChange={handlePasswordChange} />
+                </label>
 
-            <button type='submit'>Submit</button>
-        </form>
+                <button type='submit'>Submit</button>
+            </form>
+            <Link to='/signup'>New? Sign up</Link>
+        </div>
     )
 }
 
