@@ -1,8 +1,8 @@
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import RequireAuth from "../shared/auth/RequireAuth"
+import Layout from "./layouts/Layout"
 
-// import Login from "./pages/Login"
 // import Signup from "./pages/Signup"
 import SnippetList from "./pages/SnippetList"
 // import SnippetCreate from "./pages/SnippetCreate"
@@ -17,7 +17,9 @@ export default function App() {
                     path="/"
                     element={
                         <RequireAuth>
-                            <SnippetList />
+                            <Layout>
+                                <SnippetList />
+                            </Layout>
                         </RequireAuth>
                     }
                 ></Route>
