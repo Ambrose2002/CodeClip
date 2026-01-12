@@ -46,6 +46,23 @@ export function AuthProvider({ children }) {
         return data
     }
 
+    const signup = async (email, password) => {
+        const response = await fetch('http://127.0.0.1:8000/api/signup', {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        })
+
+        if (!response.ok) {
+            throw new Error(`Sign up failed: ${response.status}`);
+        }
+
+        const data = await response.json()
+        setUser(data.data[0]) // Update user state after successful login
+        return data
+    }
+
     const logout = async () => {
         try {
             await fetch('http://127.0.0.1:8000/api/logout', {
@@ -60,7 +77,7 @@ export function AuthProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading, isAuthenticated: !!user, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, isAuthenticated: !!user, login, signup, logout }}>
             {children}
         </AuthContext.Provider>
     )
