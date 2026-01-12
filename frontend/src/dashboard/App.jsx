@@ -3,7 +3,7 @@ import Login from "./pages/Login"
 import RequireAuth from "../shared/auth/RequireAuth"
 import Layout from "./layouts/Layout"
 
-// import Signup from "./pages/Signup"
+import Signup from "./pages/Signup"
 import SnippetList from "./pages/SnippetList"
 // import SnippetCreate from "./pages/SnippetCreate"
 // import SnippetView from "./pages/SnippetView"
@@ -13,6 +13,8 @@ export default function App() {
         <HashRouter>
             <Routes>
                 <Route path="/login" element={<Login />}></Route>
+                <Route path="/signup" element={<Signup />}></Route>
+
                 <Route
                     path="/"
                     element={
