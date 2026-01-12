@@ -1,8 +1,10 @@
 import os
 from dotenv import load_dotenv
-from db import db
 import json
 from flask import Flask, session, request
+from flask_cors import CORS
+
+from db import db
 from users_dao import create_user, verify_user, user_exists, get_user_by_id
 from clips_dao import get_all_clips, add_clip, get_clip_by_id
 
@@ -13,6 +15,14 @@ app = Flask(
     instance_path=os.path.abspath(
         os.path.join(os.path.dirname(__file__), "../instance")
     ),
+)
+
+app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
+
+CORS(
+    app,
+    supports_credentials=True,
+    origins=["chrome-extension://goalaikhicijokpfakcfmppipibckimn"],
 )
 
 # Create instance directory if it doesn't exist
@@ -66,19 +76,11 @@ def signup():
 @app.route("/api/login", methods=["POST"])
 def login():
     body = json.loads(request.data)
-    body = json.loads(request.data)
 
     if not body:
         return failure_response("request body required", 400)
 
     email, password = body.get("email"), body.get("password")
-
-    if "user_id" in session:
-        user_id = session.get("user_id")
-        success, user = get_user_by_id(user_id)
-        if success and user and user.email == email:
-            return failure_response(f"user is with email {email} is already logged in", 400)
-        
 
     if not email:
         return failure_response("Invalid body. email required", 400)
@@ -101,6 +103,18 @@ def login():
 def logout():
     session.clear()
     return success_response([], 200)
+
+
+@app.route("/api/me", methods=["GET"])
+def me():
+    user_id = session.get("user_id")
+    if not user_id:
+        return failure_response("Unauthorized", 401)
+    exists, user = get_user_by_id(user_id)
+
+    if exists and user:
+        return success_response([user.serialize()])
+    return failure_response("User does not exist", 400)
 
 
 @app.route("/api/get/clips")
