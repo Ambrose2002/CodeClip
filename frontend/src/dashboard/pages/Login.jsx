@@ -1,10 +1,13 @@
 import react, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../shared/auth/AuthContext';
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('')
     const navigate = useNavigate();
+    const {login} = useAuth();
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -14,39 +17,22 @@ function Login() {
         setPassword(event.target.value);
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const login = async () => {
-            try {
-                const response = await fetch('http://127.0.0.1:8000/api/login', {
-                    method: "POST",
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password
-                    })
-                })
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json()
-
-                console.log(data)
-                navigate('/')
-            } catch (error) {
-                console.log(error)
-            }
+        try {
+            await login(email, password);
+            navigate('/')
         }
-
-        login();
+        catch (error) {
+            setError('Login failed. Please check your credentials.')
+            console.log(error);
+        }
     }
 
     return (
         <form onSubmit={handleSubmit}>
+            {error && <div style={{ color: 'red' }}>{error}</div>}
             <label >
                 Email:
                 <input type="email" value={email} onChange={handleEmailChange} />
