@@ -134,7 +134,7 @@ def get_clips():
 
     return success_response(get_all_clips(user_id), 200)
 
-@app.route("/api/clip/query", methods = ["GET"])
+@app.route("/api/clip/query", methods = ["POST"])
 def query_clips():
     user_id = session.get("user_id")
     if not user_id:
@@ -145,7 +145,7 @@ def query_clips():
         return failure_response("invalid request body", 400)
 
     query = body.get("query") or ""
-    results = semantic_search(user_id, query, model, 0.2)
+    results = semantic_search(user_id, query, model, 0.05)
     return success_response(results, 200)
 
 @app.route("/api/post/clip", methods=["POST"])
