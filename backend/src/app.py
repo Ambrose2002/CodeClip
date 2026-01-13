@@ -6,7 +6,7 @@ from flask_cors import CORS
 
 from db import db
 from users_dao import create_user, verify_user, user_exists, get_user_by_id
-from clips_dao import get_all_clips, add_clip, get_clip_by_id
+from clips_dao import get_all_clips, add_clip, get_clip_by_id, modify_clip
 
 load_dotenv()
 
@@ -155,6 +155,30 @@ def add_single_clip():
         return success_response([clip.serialize()], 200)
 
     return failure_response("error adding clip", 400)
+
+@app.route("/api/clip/edit/<int:clip_id>", methods = ["POST"])
+def edit_clip(clip_id):
+    user_id = session.get("user_id")
+    if not user_id:
+        return failure_response("Unauthorized", 401)
+
+    body = json.loads(request.data)
+    if not body:
+        return failure_response("invalid request body", 400)
+    text = body.get("code")
+    title = body.get("title")
+    language = body.get("language")
+    source = body.get("source")
+
+    if not text or not title or not language or not source:
+        return failure_response("invalid body", 400)
+
+    success, clip = modify_clip(user_id, clip_id, title, text, language, source)
+        
+    if success and clip:
+        return success_response([clip], 200)
+    
+    return failure_response("Failed to save clip", 404)
 
 
 @app.route("/api/get/clip/<int:clip_id>", methods=["GET"])

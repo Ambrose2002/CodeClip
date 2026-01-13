@@ -34,3 +34,20 @@ def add_clip(user_id, text, language, source, title):
         return True, clip
 
     return False, None
+
+def modify_clip(user_id, clip_id, title, text, language, source):
+    clip = Clips.query.filter(Clips.user_id == user_id, Clips.id == clip_id).first()
+
+    if clip:
+        
+        print(clip.serialize())
+        clip.title = title
+        clip.text = text
+        clip.language = language
+        clip.source = source
+        db.session.add(clip)
+        db.session.commit()
+        
+        return True, clip.serialize()
+    
+    return False, None
