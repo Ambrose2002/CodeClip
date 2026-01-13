@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate} from 'react-router-dom';
+import { API_BASE_URL } from '../utilities';
 
 export default function EditSnippet({ snippet }) {
     const [title, setTitle] = useState('')
@@ -30,7 +31,7 @@ export default function EditSnippet({ snippet }) {
         setError('');
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/clip/edit/${snippet.id}`, {
+            const response = await fetch(`${API_BASE_URL}/clip/edit${snippet.id}`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },

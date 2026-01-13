@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react"
-
+import { API_BASE_URL } from "../../dashboard/utilities";
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
         const checkAuth = async () => {
             try {
                 console.log("fetching")
-                const response = await fetch("http://127.0.0.1:8000/api/me", {
+                const response = await fetch(`${API_BASE_URL}/me`, {
                     credentials: "include"
                 })
 
@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
     }, [])
 
     const login = async (email, password) => {
-        const response = await fetch('http://127.0.0.1:8000/api/login', {
+        const response = await fetch(`${API_BASE_URL}/login`, {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
@@ -47,7 +47,7 @@ export function AuthProvider({ children }) {
     }
 
     const signup = async (email, password) => {
-        const response = await fetch('http://127.0.0.1:8000/api/signup', {
+        const response = await fetch(`${API_BASE_URL}/signup`, {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
@@ -65,7 +65,7 @@ export function AuthProvider({ children }) {
 
     const logout = async () => {
         try {
-            await fetch('http://127.0.0.1:8000/api/logout', {
+            await fetch(`${API_BASE_URL}/logout`, {
                 method: "GET",
                 credentials: "include"
             })
