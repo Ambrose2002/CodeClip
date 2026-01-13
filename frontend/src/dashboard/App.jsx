@@ -4,7 +4,7 @@ import RequireAuth from "../shared/auth/RequireAuth"
 import Layout from "./layouts/Layout"
 
 import Signup from "./pages/Signup"
-import SnippetList from "./pages/SnippetList"
+import Home from "./pages/Home"
 // import SnippetCreate from "./pages/SnippetCreate"
 // import SnippetView from "./pages/SnippetView"
 
@@ -20,7 +20,7 @@ export default function App() {
                     element={
                         <RequireAuth>
                             <Layout>
-                                <SnippetList />
+                                <Home />
                             </Layout>
                         </RequireAuth>
                     }
