@@ -9,7 +9,6 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                console.log("fetching")
                 const response = await fetch(`${API_BASE_URL}/me`, {
                     credentials: "include"
                 })
