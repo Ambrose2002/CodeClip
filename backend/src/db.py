@@ -35,6 +35,7 @@ class Clips(db.Model):
     text = db.Column(db.String, nullable=False)
     language = db.Column(db.String, nullable=True)
     date_created = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+    date_modified = db.Column(db.DateTime, nullable = True)
     source = db.Column(db.String, nullable=False)
     title = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
@@ -55,5 +56,6 @@ class Clips(db.Model):
             "title": self.title,
             "language": self.language,
             "date_created": self.date_created.isoformat(),
+            "date_modified": self.date_modified.isoformat() if self.date_modified else "",
             "source": self.source,
         }

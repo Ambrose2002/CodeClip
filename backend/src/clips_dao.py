@@ -1,6 +1,8 @@
 from db import Clips, db
 from users_dao import get_user_by_id
 
+from datetime import datetime
+
 
 def get_all_clips(user_id) -> list:
 
@@ -45,6 +47,7 @@ def modify_clip(user_id, clip_id, title, text, language, source):
         clip.text = text
         clip.language = language
         clip.source = source
+        clip.date_modified = datetime.now()
         db.session.add(clip)
         db.session.commit()
         
