@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from pgvector.sqlalchemy import Vector
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -39,6 +40,7 @@ class Clips(db.Model):
     source = db.Column(db.String, nullable=False)
     title = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    embeddings = db.Column(db.String, )
 
     def __init__(self, **kwargs):
         self.user_id = kwargs.get("user_id")
