@@ -26,21 +26,22 @@ export default function Home() {
                     setError(data.error)
                     throw new Error("error fetching clips")
                 }
-                setSnippets(data.data)
-                snippets.sort((a, b) => {
+                
+                const sortedSnippets  = data.data.sort((a, b) => {
                     const a_modified = a.date_modified
                     const b_modified = b.date_modified
                     if (a_modified && b_modified) {
-                        return b.localeCompare(a)
+                        return b_modified.localeCompare(a_modified)
                     }
                     if (!a_modified && !b_modified) {
-                        return 0
+                        return a.title.localeCompare(b.title)
                     }
                     if (a_modified) {
                         return -1
                     } 
                     return 1
                 })
+                setSnippets(sortedSnippets)
             } catch (error) {
                 setError("Failed to fetch snippets")
                 console.log(error)
