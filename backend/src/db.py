@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from pgvector.sqlalchemy import Vector
+from pgvector.sqlalchemy import Vector  # type: ignore
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -40,7 +40,7 @@ class Clips(db.Model):
     source = db.Column(db.String, nullable=False)
     title = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    embeddings = db.Column(db.String, )
+    embedding = db.Column(Vector(384), nullable = False)
 
     def __init__(self, **kwargs):
         self.user_id = kwargs.get("user_id")
@@ -49,6 +49,7 @@ class Clips(db.Model):
         self.language = kwargs.get("language")
         self.date_created = datetime.now()
         self.source = kwargs.get("source")
+        self.embedding = kwargs.get("embedding")
 
     def serialize(self):
         return {
