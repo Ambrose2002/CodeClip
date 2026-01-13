@@ -3,10 +3,13 @@ from dotenv import load_dotenv
 import json
 from flask import Flask, session, request, make_response
 from flask_cors import CORS
+from sentence_transformers import SentenceTransformer
 
 from db import db
 from users_dao import create_user, verify_user, user_exists, get_user_by_id
 from clips_dao import get_all_clips, add_clip, get_clip_by_id, modify_clip
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
 
 load_dotenv()
 
@@ -149,7 +152,10 @@ def add_single_clip():
     if not text or not title or not language or not source:
         return failure_response("invalid body", 400)
 
-    success, clip = add_clip(user_id, text, language, source, title)
+    text_to_embed = f"language: {language} \ntitle: {title} \n code: {text}"
+    embedding = model.encode(text_to_embed)
+
+    success, clip = add_clip(user_id, text, language, source, title, embedding)
 
     if success and clip:
         return success_response([clip.serialize()], 200)
@@ -173,11 +179,14 @@ def edit_clip(clip_id):
     if not text or not title or not language or not source:
         return failure_response("invalid body", 400)
 
-    success, clip = modify_clip(user_id, clip_id, title, text, language, source)
-        
+    text_to_embed = f"language: {language} \ntitle: {title} \n code: {text}"
+    embedding = model.encode(text_to_embed)
+
+    success, clip = modify_clip(user_id, clip_id, title, text, language, source, embedding)
+
     if success and clip:
         return success_response([clip], 200)
-    
+
     return failure_response("Failed to save clip", 404)
 
 

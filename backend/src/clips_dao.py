@@ -22,13 +22,13 @@ def get_clip_by_id(user_id, clip_id) -> list:
     return []
 
 
-def add_clip(user_id, text, language, source, title):
+def add_clip(user_id, text, language, source, title, embedding):
 
     success, user = get_user_by_id(user_id)
     print(user)
     if success and user:
         clip = Clips(
-            text=text, title=title, language=language, source=source, user_id=user.id
+            text=text, title=title, language=language, source=source, user_id=user.id, embedding=embedding
         )
         db.session.add(clip)
         db.session.commit()
@@ -37,17 +37,17 @@ def add_clip(user_id, text, language, source, title):
 
     return False, None
 
-def modify_clip(user_id, clip_id, title, text, language, source):
+def modify_clip(user_id, clip_id, title, text, language, source, embedding):
     clip = Clips.query.filter(Clips.user_id == user_id, Clips.id == clip_id).first()
 
     if clip:
         
-        print(clip.serialize())
         clip.title = title
         clip.text = text
         clip.language = language
         clip.source = source
         clip.date_modified = datetime.now()
+        clip.embedding = embedding
         db.session.add(clip)
         db.session.commit()
         
