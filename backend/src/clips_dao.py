@@ -1,5 +1,6 @@
 from db import Clips, db
 from users_dao import get_user_by_id
+import numpy as np
 
 from datetime import datetime
 
@@ -41,7 +42,7 @@ def modify_clip(user_id, clip_id, title, text, language, source, embedding):
     clip = Clips.query.filter(Clips.user_id == user_id, Clips.id == clip_id).first()
 
     if clip:
-        
+
         clip.title = title
         clip.text = text
         clip.language = language
@@ -50,7 +51,31 @@ def modify_clip(user_id, clip_id, title, text, language, source, embedding):
         clip.embedding = embedding
         db.session.add(clip)
         db.session.commit()
-        
+
         return True, clip.serialize()
-    
+
     return False, None
+
+
+def semantic_search(user_id, query_text, model, min_score):
+    query_vec = np.array(model.encode(query_text), dtype=float)
+    clips = Clips.query.filter(Clips.user_id == user_id).all()
+
+    def cosine_sim(a, b):
+        denom = np.linalg.norm(a) * np.linalg.norm(b)
+        if denom == 0:
+            return 0.0
+        return float(np.dot(a, b) / denom)
+
+    scored = []
+    for clip in clips:
+        if clip.embedding is None:
+            continue
+        clip_vec = np.array(clip.embedding, dtype=float)
+        score = cosine_sim(query_vec, clip_vec)
+        if score >= min_score:
+            scored.append((score, clip))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+
+    return [{**clip.serialize(), "score": score} for score, clip in scored]

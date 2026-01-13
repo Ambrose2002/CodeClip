@@ -8,7 +8,7 @@ from sentence_transformers import SentenceTransformer
 
 from db import db
 from users_dao import create_user, verify_user, user_exists, get_user_by_id
-from clips_dao import get_all_clips, add_clip, get_clip_by_id, modify_clip
+from clips_dao import get_all_clips, add_clip, get_clip_by_id, modify_clip, semantic_search
 
 model = SentenceTransformer(
     "all-MiniLM-L6-v2", device="cuda" if torch.cuda.is_available() else "cpu"
@@ -134,6 +134,19 @@ def get_clips():
 
     return success_response(get_all_clips(user_id), 200)
 
+@app.route("/api/clip/query", methods = ["GET"])
+def query_clips():
+    user_id = session.get("user_id")
+    if not user_id:
+        return failure_response("Unauthorized", 401)
+
+    body = json.loads(request.data)
+    if not body:
+        return failure_response("invalid request body", 400)
+
+    query = body.get("query") or ""
+    results = semantic_search(user_id, query, model, 0.2)
+    return success_response(results, 200)
 
 @app.route("/api/post/clip", methods=["POST"])
 def add_single_clip():
@@ -198,6 +211,7 @@ def get_clip(clip_id):
     user_id = session.get("user_id")
     if not user_id:
         return failure_response("Unauthorized", 401)
+    
     clip = get_clip_by_id(user_id, clip_id)
     if clip:
         return success_response(clip, 200)
