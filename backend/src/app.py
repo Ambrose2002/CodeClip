@@ -3,13 +3,16 @@ from dotenv import load_dotenv
 import json
 from flask import Flask, session, request, make_response
 from flask_cors import CORS
+import torch
 from sentence_transformers import SentenceTransformer
 
 from db import db
 from users_dao import create_user, verify_user, user_exists, get_user_by_id
 from clips_dao import get_all_clips, add_clip, get_clip_by_id, modify_clip
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = SentenceTransformer(
+    "all-MiniLM-L6-v2", device="cuda" if torch.cuda.is_available() else "cpu"
+)
 
 load_dotenv()
 

@@ -1,10 +1,12 @@
 from app import app
 from db import db, Users, Clips
+import torch
 import random
 from sentence_transformers import SentenceTransformer
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
-
+model = SentenceTransformer(
+    "all-MiniLM-L6-v2", device="cuda" if torch.cuda.is_available() else "cpu"
+)
 with app.app_context():
     print("Dropping tables...")
     db.drop_all()
