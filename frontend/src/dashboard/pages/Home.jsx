@@ -1,4 +1,5 @@
 import SnippetView from "./SnippetView"
+import SnippetCreate from "./SnippetCreate"
 import { useState, useEffect } from "react"
 import { API_BASE_URL } from "../utilities"
 import '../styles/Home.css'
@@ -9,12 +10,24 @@ export default function Home() {
     const [query, setQuery] = useState('')
     const [activeSnippet, setActiveSnippet] = useState(0)
     const [error, setError] = useState('')
+    const [isCreateOpen, setIsCreateOpen] = useState(false)
 
     const handleSnippetUpdate = (updatedSnippet) => {
         setSnippets(snippets.map((snippet, index) =>
             index === activeSnippet ? updatedSnippet : snippet
         ))
     }
+    const handleSnippetCreated = (created) => {
+        setSnippets(prev => [created, ...prev])
+        setActiveSnippet(0)
+        setIsCreateOpen(false)
+    }
+
+    useEffect(() => {
+        const openCreate = () => setIsCreateOpen(true)
+        window.addEventListener('codeclip-open-create', openCreate)
+        return () => window.removeEventListener('codeclip-open-create', openCreate)
+    }, [])
     useEffect(() => {
         const fetchSnippets = async () => {
             try {
@@ -96,6 +109,12 @@ export default function Home() {
                         <div className="no-snippet">Select a snippet to view details</div>
                     )}
                 </div>
+                {isCreateOpen && (
+                    <SnippetCreate
+                        onClose={() => setIsCreateOpen(false)}
+                        onSnippetCreated={handleSnippetCreated}
+                    />
+                )}
             </div>
         </div>
     )

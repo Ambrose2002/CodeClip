@@ -16,8 +16,8 @@ export default function Navbar() {
     }
 
     function handleAddSnippet() {
-        // Navigate to add snippet page
-        navigate('/create')
+        // Emit a global event to open create modal
+        window.dispatchEvent(new CustomEvent('codeclip-open-create'))
     }
 
     return (
