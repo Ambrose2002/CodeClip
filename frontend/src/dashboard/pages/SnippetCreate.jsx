@@ -11,10 +11,18 @@ export default function SnippetCreate({ onClose, onSnippetCreated }) {
     const [text, setText] = useState('')
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const [submitted, setSubmitted] = useState(false)
+    const isFormValid = title.trim().length > 0 && language.trim().length > 0 && source.trim().length > 0 && text.trim().length > 0
 
     const handleSave = async (event) => {
         event.preventDefault();
         setError('');
+        // Require all fields (trimmed) before submission
+        if (!isFormValid) {
+            setSubmitted(true)
+            setError('All fields are required')
+            return
+        }
         setIsLoading(true)
 
         try {
@@ -67,7 +75,11 @@ export default function SnippetCreate({ onClose, onSnippetCreated }) {
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 required
+                                aria-invalid={submitted && !title.trim()}
                             />
+                            {submitted && !title.trim() && (
+                                <div className="form-error">Title is required</div>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -78,7 +90,11 @@ export default function SnippetCreate({ onClose, onSnippetCreated }) {
                                 value={language}
                                 onChange={(e) => setLanguage(e.target.value)}
                                 required
+                                aria-invalid={submitted && !language.trim()}
                             />
+                            {submitted && !language.trim() && (
+                                <div className="form-error">Language is required</div>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -89,7 +105,11 @@ export default function SnippetCreate({ onClose, onSnippetCreated }) {
                                 value={source}
                                 onChange={(e) => setSource(e.target.value)}
                                 required
+                                aria-invalid={submitted && !source.trim()}
                             />
+                            {submitted && !source.trim() && (
+                                <div className="form-error">Source is required</div>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -99,7 +119,11 @@ export default function SnippetCreate({ onClose, onSnippetCreated }) {
                                 value={text}
                                 onChange={(e) => setText(e.target.value)}
                                 required
+                                aria-invalid={submitted && !text.trim()}
                             />
+                            {submitted && !text.trim() && (
+                                <div className="form-error">Snippet text is required</div>
+                            )}
                         </div>
                     </form>
                 </div>
