@@ -7,6 +7,7 @@ import { API_BASE_URL } from '../utilities'
 export default function SnippetView({ snippet, onSnippetUpdate, onSnippetDeleted }) {
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [currentSnippet, setCurrentSnippet] = useState(snippet)
+    const [isCopied, setIsCopied] = useState(false)
 
     useEffect(() => {
         setCurrentSnippet(snippet)
@@ -30,6 +31,16 @@ export default function SnippetView({ snippet, onSnippetUpdate, onSnippetDeleted
             return true;
         } catch (err) {
             return false;
+        }
+    }
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(currentSnippet.text)
+            setIsCopied(true)
+            setTimeout(() => setIsCopied(false), 2000)
+        } catch (error) {
+            console.error("Failed to copy code:", error)
         }
     }
 
@@ -76,7 +87,16 @@ export default function SnippetView({ snippet, onSnippetUpdate, onSnippetDeleted
                 </div>
 
                 <div className="snippet-detail-body">
-                    <pre className="snippet-code">{currentSnippet.text}</pre>
+                    <div className="snippet-code-container">
+                        <button
+                            className={`copy-button ${isCopied ? 'copied' : ''}`}
+                            onClick={handleCopy}
+                            title="Copy to clipboard"
+                        >
+                            <span className="copy-icon">{isCopied ? '✓' : '⌘'}</span>
+                        </button>
+                        <pre className="snippet-code">{currentSnippet.text}</pre>
+                    </div>
 
                     <div className="snippet-actions">
                         <button className="btn-primary" onClick={() => setIsEditOpen(true)}>Edit</button>
