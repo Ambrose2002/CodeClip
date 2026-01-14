@@ -1,0 +1,44 @@
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.edit-form .form-group {
+  margin-bottom: 0;
+}
+
+.edit-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.edit-form input[type="text"],
+.edit-form textarea,
+.edit-form select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+}
+
+.edit-form input[type="text"],
+.edit-form select {
+  font-family: inherit;
+}
+
+.edit-form textarea {
+  min-height: 200px;
+  resize: vertical;
+}
+
+.form-error-message {
+  color: var(--button-danger);
+  font-size: 13px;
+  margin-top: 4px;
+}
