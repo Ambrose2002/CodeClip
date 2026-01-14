@@ -8,7 +8,7 @@ from sentence_transformers import SentenceTransformer
 
 from db import db
 from users_dao import create_user, verify_user, user_exists, get_user_by_id
-from clips_dao import get_all_clips, add_clip, get_clip_by_id, modify_clip, semantic_search
+from clips_dao import get_all_clips, add_clip, get_clip_by_id, modify_clip, semantic_search, delete_clip
 
 model = SentenceTransformer(
     "all-MiniLM-L6-v2", device="cuda" if torch.cuda.is_available() else "cpu"
@@ -217,6 +217,19 @@ def get_clip(clip_id):
         return success_response(clip, 200)
     return failure_response("clip not found", 404)
 
+
+@app.route("/api/delete/clip/<int:clip_id>", methods = ["DELETE"])
+def remove_clip(clip_id):
+    user_id = session.get("user_id")
+    if not user_id:
+        return failure_response("Unauthorized", 401)
+    
+    removed, message = delete_clip(user_id, clip_id)
+    print(message)
+    if removed:
+        return success_response([])
+    return failure_response(message)
+    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)

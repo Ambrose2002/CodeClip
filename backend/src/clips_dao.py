@@ -29,7 +29,12 @@ def add_clip(user_id, text, language, source, title, embedding):
     print(user)
     if success and user:
         clip = Clips(
-            text=text, title=title, language=language, source=source, user_id=user.id, embedding=embedding
+            text=text,
+            title=title,
+            language=language,
+            source=source,
+            user_id=user.id,
+            embedding=embedding,
         )
         db.session.add(clip)
         db.session.commit()
@@ -37,6 +42,7 @@ def add_clip(user_id, text, language, source, title, embedding):
         return True, clip
 
     return False, None
+
 
 def modify_clip(user_id, clip_id, title, text, language, source, embedding):
     clip = Clips.query.filter(Clips.user_id == user_id, Clips.id == clip_id).first()
@@ -79,3 +85,18 @@ def semantic_search(user_id, query_text, model, min_score):
     scored.sort(key=lambda x: x[0], reverse=True)
 
     return [{**clip.serialize(), "score": score} for score, clip in scored]
+
+
+def delete_clip(user_id, clip_id):
+
+    clip = Clips.query.filter(Clips.user_id == user_id, Clips.id == clip_id).first()
+
+    if clip:
+        try:
+            db.session.delete(clip)
+            db.session.commit()
+            return True, ""
+        except Exception as e:
+            return False, str(e)
+
+    return False, "clip not found"
