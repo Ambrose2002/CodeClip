@@ -28,6 +28,7 @@
 .meta-item {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .meta-label {
@@ -43,6 +44,8 @@
   font-size: 14px;
   color: var(--text-primary);
   font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 
 .snippet-detail-body {
