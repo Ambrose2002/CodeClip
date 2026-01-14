@@ -5,11 +5,17 @@ from flask import Flask, session, request, make_response
 from flask_cors import CORS
 import torch
 from sentence_transformers import SentenceTransformer
-from pygments.lexers import guess_lexer
 
 from db import db
 from users_dao import create_user, verify_user, user_exists, get_user_by_id
-from clips_dao import get_all_clips, add_clip, get_clip_by_id, modify_clip, semantic_search, delete_clip
+from clips_dao import (
+    get_all_clips,
+    add_clip,
+    get_clip_by_id,
+    modify_clip,
+    semantic_search,
+    delete_clip,
+)
 
 model = SentenceTransformer(
     "all-MiniLM-L6-v2", device="cuda" if torch.cuda.is_available() else "cpu"
@@ -135,7 +141,8 @@ def get_clips():
 
     return success_response(get_all_clips(user_id), 200)
 
-@app.route("/api/clip/query", methods = ["POST"])
+
+@app.route("/api/clip/query", methods=["POST"])
 def query_clips():
     user_id = session.get("user_id")
     if not user_id:
@@ -148,6 +155,7 @@ def query_clips():
     query = body.get("query") or ""
     results = semantic_search(user_id, query, model, 0.05)
     return success_response(results, 200)
+
 
 @app.route("/api/post/clip", methods=["POST"])
 def add_single_clip():
@@ -166,11 +174,10 @@ def add_single_clip():
     language = body.get("language")
     source = body.get("source")
 
-    if not text or not title or not source:
-        return failure_response("invalid body", 400)
-    
-    if not language:
-        language = guess_lexer(text).name
+    if not text or not title or not source or not language:
+        return failure_response(
+            "invalid body: text, title, source, and language required", 400
+        )
 
     text_to_embed = f"language: {language} \ntitle: {title} \n code: {text}"
     embedding = model.encode(text_to_embed)
@@ -182,7 +189,8 @@ def add_single_clip():
 
     return failure_response("error adding clip", 400)
 
-@app.route("/api/clip/edit/<int:clip_id>", methods = ["POST"])
+
+@app.route("/api/clip/edit/<int:clip_id>", methods=["POST"])
 def edit_clip(clip_id):
     user_id = session.get("user_id")
     if not user_id:
@@ -196,16 +204,17 @@ def edit_clip(clip_id):
     language = body.get("language")
     source = body.get("source")
 
-    if not text or not title or not source:
-        return failure_response("invalid body", 400)
-    
-    if not language:
-        language = guess_lexer(text).name
+    if not text or not title or not source or not language:
+        return failure_response(
+            "invalid body: code, title, source, and language required", 400
+        )
 
     text_to_embed = f"language: {language} \ntitle: {title} \n code: {text}"
     embedding = model.encode(text_to_embed)
 
-    success, clip = modify_clip(user_id, clip_id, title, text, language, source, embedding)
+    success, clip = modify_clip(
+        user_id, clip_id, title, text, language, source, embedding
+    )
 
     if success and clip:
         return success_response([clip], 200)
@@ -218,25 +227,25 @@ def get_clip(clip_id):
     user_id = session.get("user_id")
     if not user_id:
         return failure_response("Unauthorized", 401)
-    
+
     clip = get_clip_by_id(user_id, clip_id)
     if clip:
         return success_response(clip, 200)
     return failure_response("clip not found", 404)
 
 
-@app.route("/api/delete/clip/<int:clip_id>", methods = ["DELETE"])
+@app.route("/api/delete/clip/<int:clip_id>", methods=["DELETE"])
 def remove_clip(clip_id):
     user_id = session.get("user_id")
     if not user_id:
         return failure_response("Unauthorized", 401)
-    
+
     removed, message = delete_clip(user_id, clip_id)
     print(message)
     if removed:
         return success_response([])
     return failure_response(message)
-    
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
