@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import '../styles/SnippetView.css'
 import '../styles/shared.css'
 import EditSnippet from './EditSnippet'
@@ -6,6 +6,10 @@ import EditSnippet from './EditSnippet'
 export default function SnippetView({ snippet, onSnippetUpdate }) {
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [currentSnippet, setCurrentSnippet] = useState(snippet)
+
+    useEffect(() => {
+        setCurrentSnippet(snippet)
+    }, [snippet])
 
     const handleSnippetUpdate = (updatedSnippet) => {
         setCurrentSnippet(updatedSnippet)
@@ -40,7 +44,7 @@ export default function SnippetView({ snippet, onSnippetUpdate }) {
                         </div>
                         <div className="meta-item">
                             <span className="meta-label">Source</span>
-                        {isValidUrl(currentSnippet.source)? <a href={currentSnippet.source} target='_blank'>{currentSnippet.source}</a>:<span className="meta-value">{currentSnippet.source}</span>}
+                            {isValidUrl(currentSnippet.source) ? <a href={currentSnippet.source} className="meta-value" target='_blank'>{currentSnippet.source}</a> : <span className="meta-value">{currentSnippet.source}</span>}
                         </div>
                         <div className="meta-item">
                             <span className="meta-label">Created</span>

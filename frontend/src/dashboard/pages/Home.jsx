@@ -9,6 +9,12 @@ export default function Home() {
     const [query, setQuery] = useState('')
     const [activeSnippet, setActiveSnippet] = useState(0)
     const [error, setError] = useState('')
+
+    const handleSnippetUpdate = (updatedSnippet) => {
+        setSnippets(snippets.map((snippet, index) =>
+            index === activeSnippet ? updatedSnippet : snippet
+        ))
+    }
     useEffect(() => {
         const fetchSnippets = async () => {
             try {
@@ -18,7 +24,6 @@ export default function Home() {
                     response = await fetch(`${API_BASE_URL}/get/clips`)
                 }
                 else {
-                    console.log(query)
                     response = await fetch(`${API_BASE_URL}/clip/query`, {
                         method: "POST",
                         credentials: "include",
@@ -55,6 +60,7 @@ export default function Home() {
                 } else {
                     setSnippets(data.data)
                 }
+                setActiveSnippet(0)
 
             } catch (error) {
                 setError("Failed to fetch snippets")
@@ -66,11 +72,8 @@ export default function Home() {
     return (
         <div className="home-container">
             <div className="home-sidebar">
-                <div className="sidebar-header">
-                    <h1 className="sidebar-title">Snippet Saver</h1>
-                </div>
                 <div className="sidebar-search">
-                    <input type="text" placeholder="🔍 Search" />
+                    <input type="text" placeholder="🔍 Search" onChange={(e) => setQuery(e.target.value)} />
                 </div>
                 <ul className="snippets-list">
                     {snippets.map((item, index) => (
@@ -86,16 +89,9 @@ export default function Home() {
             </div>
 
             <div className="home-content">
-                <div className="search-bar">
-                    <input
-                        type="text"
-                        placeholder="Search snippets..."
-                        onChange={(e) => setQuery(e.target.value)}
-                    />
-                </div>
                 <div className="snippet-view-container">
                     {(activeSnippet < snippets.length) ? (
-                        <SnippetView snippet={snippets[activeSnippet]} />
+                        <SnippetView snippet={snippets[activeSnippet]} onSnippetUpdate={handleSnippetUpdate} />
                     ) : (
                         <div className="no-snippet">Select a snippet to view details</div>
                     )}
