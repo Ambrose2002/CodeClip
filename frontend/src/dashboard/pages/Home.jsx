@@ -22,6 +22,11 @@ export default function Home() {
         setActiveSnippet(0)
         setIsCreateOpen(false)
     }
+    const handleSnippetDeleted = (deletedId) => {
+        const newSnippets = snippets.filter(s => s.id !== deletedId)
+        setSnippets(newSnippets)
+        setActiveSnippet(Math.max(0, activeSnippet - 1))
+    }
 
     useEffect(() => {
         const openCreate = () => setIsCreateOpen(true)
@@ -118,7 +123,7 @@ export default function Home() {
             <div className="home-content">
                 <div className="snippet-view-container">
                     {(activeSnippet < snippets.length) ? (
-                        <SnippetView snippet={snippets[activeSnippet]} onSnippetUpdate={handleSnippetUpdate} />
+                        <SnippetView snippet={snippets[activeSnippet]} onSnippetUpdate={handleSnippetUpdate} onSnippetDeleted={handleSnippetDeleted} />
                     ) : (
                         <div className="no-snippet">Select a snippet to view details</div>
                     )}

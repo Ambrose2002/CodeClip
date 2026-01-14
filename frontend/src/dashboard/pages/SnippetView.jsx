@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import '../styles/SnippetView.css'
 import '../styles/shared.css'
 import EditSnippet from './EditSnippet'
+import { API_BASE_URL } from '../utilities'
 
-export default function SnippetView({ snippet, onSnippetUpdate }) {
+export default function SnippetView({ snippet, onSnippetUpdate, onSnippetDeleted }) {
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [currentSnippet, setCurrentSnippet] = useState(snippet)
 
@@ -29,6 +30,27 @@ export default function SnippetView({ snippet, onSnippetUpdate }) {
             return true;
         } catch (err) {
             return false;
+        }
+    }
+
+    const handleDelete = async () => {
+        if (!window.confirm(`Are you sure you want to delete "${currentSnippet.title}"?`)) {
+            return
+        }
+        try {
+            const response = await fetch(`${API_BASE_URL}/delete/clip/${currentSnippet.id}`, {
+                method: "DELETE",
+                credentials: "include",
+            })
+            if (!response.ok) {
+                console.error("Failed to delete snippet")
+                return
+            }
+            if (onSnippetDeleted) {
+                onSnippetDeleted(currentSnippet.id)
+            }
+        } catch (error) {
+            console.error("Error deleting snippet:", error)
         }
     }
 
@@ -58,7 +80,7 @@ export default function SnippetView({ snippet, onSnippetUpdate }) {
 
                     <div className="snippet-actions">
                         <button className="btn-primary" onClick={() => setIsEditOpen(true)}>Edit</button>
-                        <button className="btn-danger">Delete</button>
+                        <button className="btn-danger" onClick={handleDelete}>Delete</button>
                     </div>
                 </div>
             </div>
