@@ -1,6 +1,8 @@
 import SnippetView from "./SnippetView"
 import { useState, useEffect } from "react"
 import { API_BASE_URL } from "../utilities"
+import '../styles/Home.css'
+import '../styles/shared.css'
 
 export default function Home() {
     const [snippets, setSnippets] = useState([])
@@ -11,7 +13,7 @@ export default function Home() {
         const fetchSnippets = async () => {
             try {
                 let response
-                
+
                 if (query.length == 0) {
                     response = await fetch(`${API_BASE_URL}/get/clips`)
                 }
@@ -53,7 +55,7 @@ export default function Home() {
                 } else {
                     setSnippets(data.data)
                 }
-                
+
             } catch (error) {
                 setError("Failed to fetch snippets")
                 console.log(error)
@@ -62,16 +64,43 @@ export default function Home() {
         fetchSnippets();
     }, [query])
     return (
-        <div>
-            <div>
-                <input type="text" placeholder="Search clips" onChange={(e) => setQuery(e.target.value)} />
+        <div className="home-container">
+            <div className="home-sidebar">
+                <div className="sidebar-header">
+                    <h1 className="sidebar-title">Snippet Saver</h1>
+                </div>
+                <div className="sidebar-search">
+                    <input type="text" placeholder="🔍 Search" />
+                </div>
+                <ul className="snippets-list">
+                    {snippets.map((item, index) => (
+                        <li
+                            key={index}
+                            onClick={(e) => setActiveSnippet(index)}
+                            className={activeSnippet === index ? 'active' : ''}
+                        >
+                            {item.title}
+                        </li>
+                    ))}
+                </ul>
             </div>
 
-            <ul>
-                {snippets.map((item, index) => (
-                    <li key={index}>{item.title}</li>
-                ))}
-            </ul>
+            <div className="home-content">
+                <div className="search-bar">
+                    <input
+                        type="text"
+                        placeholder="Search snippets..."
+                        onChange={(e) => setQuery(e.target.value)}
+                    />
+                </div>
+                <div className="snippet-view-container">
+                    {(activeSnippet < snippets.length) ? (
+                        <SnippetView snippet={snippets[activeSnippet]} />
+                    ) : (
+                        <div className="no-snippet">Select a snippet to view details</div>
+                    )}
+                </div>
+            </div>
         </div>
     )
 }
