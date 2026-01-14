@@ -5,6 +5,7 @@ from flask import Flask, session, request, make_response
 from flask_cors import CORS
 import torch
 from sentence_transformers import SentenceTransformer
+from pygments.lexers import guess_lexer
 
 from db import db
 from users_dao import create_user, verify_user, user_exists, get_user_by_id
@@ -165,8 +166,11 @@ def add_single_clip():
     language = body.get("language")
     source = body.get("source")
 
-    if not text or not title or not language or not source:
+    if not text or not title or not source:
         return failure_response("invalid body", 400)
+    
+    if not language:
+        language = guess_lexer(text).name
 
     text_to_embed = f"language: {language} \ntitle: {title} \n code: {text}"
     embedding = model.encode(text_to_embed)
@@ -192,8 +196,11 @@ def edit_clip(clip_id):
     language = body.get("language")
     source = body.get("source")
 
-    if not text or not title or not language or not source:
+    if not text or not title or not source:
         return failure_response("invalid body", 400)
+    
+    if not language:
+        language = guess_lexer(text).name
 
     text_to_embed = f"language: {language} \ntitle: {title} \n code: {text}"
     embedding = model.encode(text_to_embed)
