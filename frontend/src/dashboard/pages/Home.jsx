@@ -55,20 +55,34 @@ export default function Home() {
                     throw new Error("error fetching clips")
                 }
                 if (!query) {
-                    const sortedSnippets = data.data.sort((a, b) => {
-                        const a_modified = a.date_modified
-                        const b_modified = b.date_modified
-                        if (a_modified && b_modified) {
-                            return b_modified.localeCompare(a_modified)
-                        }
-                        if (!a_modified && !b_modified) {
-                            return a.title.localeCompare(b.title)
-                        }
-                        if (a_modified) {
-                            return -1
-                        }
-                        return 1
-                    })
+                    const sortedSnippets = data.data
+                        .slice()
+                        .sort((a, b) => {
+                            const aTime = a?.date_modified
+                                ? Date.parse(a.date_modified)
+                                : a?.date_created
+                                    ? Date.parse(a.date_created)
+                                    : NaN
+                            const bTime = b?.date_modified
+                                ? Date.parse(b.date_modified)
+                                : b?.date_created
+                                    ? Date.parse(b.date_created)
+                                    : NaN
+
+                            const aHas = !Number.isNaN(aTime)
+                            const bHas = !Number.isNaN(bTime)
+
+                            // Both have a timestamp: newest first
+                            if (aHas && bHas) {
+                                return bTime - aTime
+                            }
+                            // Prefer items with any timestamp
+                            if (aHas && !bHas) return -1
+                            if (!aHas && bHas) return 1
+
+                            // Fallback: alphabetical by title
+                            return String(a.title || '').localeCompare(String(b.title || ''))
+                        })
                     setSnippets(sortedSnippets)
                 } else {
                     setSnippets(data.data)
