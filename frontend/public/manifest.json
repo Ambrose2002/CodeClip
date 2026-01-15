@@ -6,12 +6,17 @@
   "action": {
     "default_popup": "popup.html"
   },
-  "permissions": ["contextMenus"],
-  "host_permissions": [
-  "http://127.0.0.1:8000/*"
-  ],
+  "permissions": ["contextMenus", "scripting", "activeTab"],
+  "host_permissions": ["http://127.0.0.1:8000/*"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ]
 }
