@@ -77,7 +77,7 @@ export default function SnippetView({ snippet, onSnippetUpdate, onSnippetDeleted
                         </div>
                         <div className="meta-item">
                             <span className="meta-label">Source</span>
-                            {isValidUrl(currentSnippet.source) ? <a href={currentSnippet.source} className="meta-value" target='_blank'>{currentSnippet.source}</a> : <span className="meta-value">{currentSnippet.source}</span>}
+                            {isValidUrl(currentSnippet.source) ? <a href={currentSnippet.source} className="meta-value" target='_blank'>Link to external source</a> : <span className="meta-value">{currentSnippet.source}</span>}
                         </div>
                         <div className="meta-item">
                             <span className="meta-label">Created</span>
