@@ -7,16 +7,46 @@ chrome.runtime.onInstalled.addListener(async () => {
     })
 })
 
-chrome.contextMenus.onClicked.addListener((item, tab) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "SAVE_SNIPPET") {
+        const { title, language, source, text } = request.data;
+
+        fetch("http://127.0.0.1:8000/api/post/clip", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, language, source, text })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    sendResponse({ success: true });
+                } else {
+                    sendResponse({ success: false, error: data.error });
+                }
+            })
+            .catch(error => {
+                sendResponse({ success: false, error: error.message });
+            });
+
+        return true; // Keep message channel open for async response
+    }
+});
+
+chrome.contextMenus.onClicked.addListener(async (item, tab) => {
 
     if (item.menuItemId == "codeClipId") {
         const selectedText = item.selectionText;
         const pageUrl = item.pageUrl
 
-        chrome.tabl.sendMessage(tab.id, {
-            action: "SHOW_MODAL",
-            selectedText: selectedText,
-            pageUrl: pageUrl
-        })
+        try {
+            await chrome.tabs.sendMessage(tab.id, {
+                action: "SHOW_MODAL",
+                selectedText: selectedText,
+                pageUrl: pageUrl
+            })
+        } catch (error) {
+            console.log("Cannot inject into this page: ", error.message)
+        }
     }
 })
