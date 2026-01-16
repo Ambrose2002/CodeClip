@@ -46,10 +46,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 chrome.contextMenus.onClicked.addListener(async (item, tab) => {
 
     if (item.menuItemId == "codeClipId") {
-        const selectedText = item.selectionText;
         const pageUrl = item.pageUrl
 
         try {
+            // Get the actual selected text from the page to preserve formatting
+            const results = await chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                func: () => {
+                    const selection = window.getSelection();
+                    return selection ? selection.toString() : '';
+                }
+            });
+
+            const selectedText = results && results[0] ? results[0].result : item.selectionText;
+
             await chrome.tabs.sendMessage(tab.id, {
                 action: "SHOW_MODAL",
                 selectedText: selectedText,
