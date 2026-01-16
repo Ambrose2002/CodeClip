@@ -3,8 +3,12 @@
   "name": "CodeClip",
   "version": "1.0.0",
   "description": "A simple React app as a Chrome extension",
+  "icons": {
+    "128": "icon-128.png"
+  },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "icon-128.png"
   },
   "permissions": ["contextMenus", "scripting", "activeTab"],
   "host_permissions": ["https://codeclip-2vhz.onrender.com/api/*"],
