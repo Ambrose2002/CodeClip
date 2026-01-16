@@ -207,6 +207,11 @@ function createModal(snippet, source) {
                     <div>${escapeHtml(snippet)}</div>
                 </div>
 
+                <div class="codeclip-form-group">
+                    <label>Source</label>
+                    <div style="padding: 10px 12px; background-color: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 14px; color: #666666; word-break: break-all;">${escapeHtml(source)}</div>
+                </div>
+
                 <form id="codeclip-save-form">
                     <div class="codeclip-form-group">
                         <label for="codeclip-title">Title <span style="color: #e74c3c;">*</span></label>
@@ -230,17 +235,6 @@ function createModal(snippet, source) {
                         >
                         <div class="codeclip-form-error" id="codeclip-language-error" style="display: none;">Language is required</div>
                     </div>
-
-                    <div class="codeclip-form-group">
-                        <label for="codeclip-source">Source <span style="color: #e74c3c;">*</span></label>
-                        <input 
-                            type="text" 
-                            id="codeclip-source" 
-                            placeholder="e.g., GitHub, Stack Overflow"
-                            required
-                        >
-                        <div class="codeclip-form-error" id="codeclip-source-error" style="display: none;">Source is required</div>
-                    </div>
                 </form>
             </div>
 
@@ -255,7 +249,6 @@ function createModal(snippet, source) {
 
     const titleInput = document.getElementById('codeclip-title');
     const languageInput = document.getElementById('codeclip-language');
-    const sourceInput = document.getElementById('codeclip-source');
     const saveButton = document.getElementById('codeclip-save');
     const cancelButton = document.getElementById('codeclip-cancel');
     const closeButton = document.getElementById('codeclip-modal-close');
@@ -280,12 +273,10 @@ function createModal(snippet, source) {
 
         const title = titleInput.value.trim();
         const language = languageInput.value.trim();
-        const sourceUrl = sourceInput.value.trim();
 
         // Clear previous errors
         document.getElementById('codeclip-title-error').style.display = 'none';
         document.getElementById('codeclip-language-error').style.display = 'none';
-        document.getElementById('codeclip-source-error').style.display = 'none';
 
         let isValid = true;
 
@@ -297,10 +288,6 @@ function createModal(snippet, source) {
             document.getElementById('codeclip-language-error').style.display = 'block';
             isValid = false;
         }
-        if (!sourceUrl) {
-            document.getElementById('codeclip-source-error').style.display = 'block';
-            isValid = false;
-        }
 
         if (!isValid) return;
 
@@ -310,16 +297,15 @@ function createModal(snippet, source) {
         // Send message to background script to make the API call
         chrome.runtime.sendMessage({
             action: "SAVE_SNIPPET",
-            data: { title, language, source: sourceUrl, text: snippet }
+            data: { title, language, source, text: snippet }
         }, (response) => {
-            if (response && response.success) {
-                console.log("Snippet saved successfully");
+            if (response && response.success === true) {
                 closeModal();
             } else {
-                console.log("Error saving snippet:", response?.error);
                 saveButton.disabled = false;
                 saveButton.textContent = 'Save Snippet';
-                alert('Error saving snippet: ' + (response?.error || 'Unknown error'));
+                const errorMsg = response?.error || 'Unknown error';
+                alert('Error saving snippet: ' + errorMsg);
             }
         });
     });

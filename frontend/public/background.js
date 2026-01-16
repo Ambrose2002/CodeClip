@@ -7,32 +7,39 @@ chrome.runtime.onInstalled.addListener(async () => {
     })
 })
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "SAVE_SNIPPET") {
         const { title, language, source, text } = request.data;
 
-        try {
-            const response = await fetch("http://127.0.0.1:8000/api/post/clip", {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, language, source, text })
+        fetch("http://127.0.0.1:8000/api/post/clip", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, language, source, text })
+        })
+            .then(response => {
+
+                if (!response.ok) {
+                    sendResponse({ success: false, error: "failure posting clip" })
+                    return null;
+                }
+
+                return response.json();
             })
+            .then(data => {
+                if (!data) return;
 
-            if (!response.ok) {
-                sendResponse({ success: false, error: "failure posting clip" })
-            }
+                if (!data.ok) {
+                    sendResponse({ success: false, error: "failure posting clip" })
+                    return
+                }
+                sendResponse({ success: true })
+            })
+            .catch(error => {
+                sendResponse({ success: false, error: error.message })
+            });
 
-            const data = await response.json()
-
-            if (!data.ok) {
-                sendResponse({ success: false, error: "failure posting clip" })
-            }
-            sendResponse({ success: true })
-        } catch (error) {
-            sendResponse({ success: false, error: data.error })
-        }
-
+        return true;
     }
 });
 
