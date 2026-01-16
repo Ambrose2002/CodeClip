@@ -202,9 +202,9 @@ function createModal(snippet, source) {
             </div>
 
             <div class="codeclip-modal-body">
-                <div class="codeclip-snippet-preview">
-                    <div class="codeclip-snippet-label">Snippet Preview:</div>
-                    <div>${escapeHtml(snippet)}</div>
+                <div class="codeclip-form-group">
+                    <label>Snippet Preview</label>
+                    <div class="codeclip-snippet-preview">${escapeHtml(snippet)}</div>
                 </div>
 
                 <div class="codeclip-form-group">
