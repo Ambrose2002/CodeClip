@@ -3,8 +3,8 @@ from dotenv import load_dotenv
 import json
 from flask import Flask, session, request, make_response
 from flask_cors import CORS
-import torch
-from sentence_transformers import SentenceTransformer
+# import torch
+# from sentence_transformers import SentenceTransformer
 
 from src.db import db
 from src.users_dao import create_user, verify_user, user_exists, get_user_by_id
@@ -13,17 +13,17 @@ from src.clips_dao import (
     add_clip,
     get_clip_by_id,
     modify_clip,
-    semantic_search,
     delete_clip,
+    basic_search
 )
 
 # Load environment variables from .env file (for local development)
 load_dotenv()
 
 # Initialize the model
-model = SentenceTransformer(
-    "all-MiniLM-L6-v2", device="cuda" if torch.cuda.is_available() else "cpu"
-)
+# model = SentenceTransformer(
+#     "all-MiniLM-L6-v2", device="cuda" if torch.cuda.is_available() else "cpu"
+# )
 
 app = Flask(__name__)
 
@@ -187,7 +187,8 @@ def query_clips():
         return failure_response("invalid request body", 400)
 
     query = body.get("query") or ""
-    results = semantic_search(user_id, query, model, 0.05)
+    # results = semantic_search(user_id, query, model, 0.05)
+    results = basic_search(user_id, query)
     return success_response(results, 200)
 
 
@@ -213,10 +214,10 @@ def add_single_clip():
             "invalid body: text, title, source, and language required", 400
         )
 
-    text_to_embed = f"language: {language} \ntitle: {title} \n code: {text}"
-    embedding = model.encode(text_to_embed)
+    # text_to_embed = f"language: {language} \ntitle: {title} \n code: {text}"
+    # embedding = model.encode(text_to_embed)
 
-    success, clip = add_clip(user_id, text, language, source, title, embedding)
+    success, clip = add_clip(user_id, text, language, source, title, [])
 
     if success and clip:
         return success_response([clip.serialize()], 200)
@@ -243,11 +244,11 @@ def edit_clip(clip_id):
             "invalid body: code, title, source, and language required", 400
         )
 
-    text_to_embed = f"language: {language} \ntitle: {title} \n code: {text}"
-    embedding = model.encode(text_to_embed)
+    # text_to_embed = f"language: {language} \ntitle: {title} \n code: {text}"
+    # embedding = model.encode(text_to_embed)
 
     success, clip = modify_clip(
-        user_id, clip_id, title, text, language, source, embedding
+        user_id, clip_id, title, text, language, source, []
     )
 
     if success and clip:

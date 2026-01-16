@@ -87,6 +87,42 @@ def semantic_search(user_id, query_text, model, min_score):
     return [{**clip.serialize(), "score": score} for score, clip in scored]
 
 
+def basic_search(user_id, query_text):
+    """
+    Simple text-based search that looks for matches in title, text, language, and source.
+    Case-insensitive search across all fields.
+    """
+    query_lower = query_text.lower()
+
+    clips = Clips.query.filter(Clips.user_id == user_id).all()
+
+    matches = []
+    for clip in clips:
+        # Check if query appears in any field
+        title_match = query_lower in (clip.title or "").lower()
+        text_match = query_lower in (clip.text or "").lower()
+        language_match = query_lower in (clip.language or "").lower()
+        source_match = query_lower in (clip.source or "").lower()
+
+        if title_match or text_match or language_match or source_match:
+            # Calculate a simple relevance score
+            score = 0
+            if title_match:
+                score += 3  # Title matches are most relevant
+            if text_match:
+                score += 2
+            if language_match:
+                score += 1
+            if source_match:
+                score += 1
+
+            matches.append((score, clip))
+
+    matches.sort(key=lambda x: (x[0], x[1].date_created), reverse=True)
+
+    return [clip.serialize() for score, clip in matches]
+
+
 def delete_clip(user_id, clip_id):
 
     clip = Clips.query.filter(Clips.user_id == user_id, Clips.id == clip_id).first()
