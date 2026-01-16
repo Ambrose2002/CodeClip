@@ -1,4 +1,4 @@
-from db import Users, db
+from src.db import Users, db
 def user_exists(email):
     user = Users.query.filter(Users.email == email).first()
     

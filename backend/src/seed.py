@@ -1,5 +1,5 @@
-from app import app
-from db import db, Users, Clips
+from src.app import app
+from src.db import db, Users, Clips
 import torch
 import random
 from sentence_transformers import SentenceTransformer

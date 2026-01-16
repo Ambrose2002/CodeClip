@@ -1,5 +1,5 @@
-from db import Clips, db
-from users_dao import get_user_by_id
+from src.db import Clips, db
+from src.users_dao import get_user_by_id
 import numpy as np
 
 from datetime import datetime

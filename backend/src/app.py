@@ -6,9 +6,9 @@ from flask_cors import CORS
 import torch
 from sentence_transformers import SentenceTransformer
 
-from db import db
-from users_dao import create_user, verify_user, user_exists, get_user_by_id
-from clips_dao import (
+from src.db import db
+from src.users_dao import create_user, verify_user, user_exists, get_user_by_id
+from src.clips_dao import (
     get_all_clips,
     add_clip,
     get_clip_by_id,
