@@ -8,6 +8,7 @@ Flask==3.1.2
 flask-cors==6.0.2
 Flask-SQLAlchemy==3.1.1
 fsspec==2026.1.0
+gunicorn==23.0.0
 hf-xet==1.2.0
 huggingface-hub==0.36.0
 identify==2.6.3
