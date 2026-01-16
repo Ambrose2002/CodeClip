@@ -1,12 +1,12 @@
 from src.app import app
 from src.db import db, Users, Clips
-import torch
+# import torch
 import random
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
 
-model = SentenceTransformer(
-    "all-MiniLM-L6-v2", device="cuda" if torch.cuda.is_available() else "cpu"
-)
+# model = SentenceTransformer(
+#     "all-MiniLM-L6-v2", device="cuda" if torch.cuda.is_available() else "cpu"
+# )
 with app.app_context():
     print("Dropping tables...")
     db.drop_all()
@@ -210,26 +210,26 @@ with app.app_context():
             "source": "https://www.geeksforgeeks.org/break-list-chunks-size-n-python",
         },
     ]
-    data_to_embed = []
+    # data_to_embed = []
     
-    for entry in clip_samples:
-        data = f"language: {entry['language']} \ntitle: {entry['title']} \n code: {entry['text']}"
-        data_to_embed.append(data)
-    embeddings = model.encode(data_to_embed)
+    # for entry in clip_samples:
+    #     data = f"language: {entry['language']} \ntitle: {entry['title']} \n code: {entry['text']}"
+    #     data_to_embed.append(data)
+    # embeddings = model.encode(data_to_embed)
     
 
     users = [user1, user2, user3, user4, user5]
 
     for idx, clip in enumerate(clip_samples):
         user_id = random.randint(1, len(users))
-        embedding = embeddings[idx]
+        # embedding = embeddings[idx]
         clip_object = Clips(
             text=clip["text"],
             title=clip["title"],
             language=clip["language"],
             source=clip["source"],
             user_id=user_id,
-            embedding = embedding
+            # embedding = embedding
         )
         db.session.add(clip_object)
 
