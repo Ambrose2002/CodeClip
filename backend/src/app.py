@@ -17,42 +17,70 @@ from clips_dao import (
     delete_clip,
 )
 
+# Load environment variables from .env file (for local development)
+load_dotenv()
+
+# Initialize the model
 model = SentenceTransformer(
     "all-MiniLM-L6-v2", device="cuda" if torch.cuda.is_available() else "cpu"
 )
 
-load_dotenv()
+app = Flask(__name__)
 
-app = Flask(
-    __name__,
-    instance_path=os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "../instance")
-    ),
+# Session configuration
+app.config.update(
+    SESSION_COOKIE_SAMESITE="None",
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
 )
 
-app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
+# Get allowed origins from environment or use defaults
+allowed_origins = os.environ.get("ALLOWED_ORIGINS", "").split(",")
+if not allowed_origins or allowed_origins == [""]:
+    # Default for local development
+    allowed_origins = ["chrome-extension://goalaikhicijokpfakcfmppipibckimn"]
 
 CORS(
     app,
     supports_credentials=True,
-    origins=["chrome-extension://goalaikhicijokpfakcfmppipibckimn"],
+    origins=allowed_origins,
 )
 
-# Create instance directory if it doesn't exist
-os.makedirs(app.instance_path, exist_ok=True)
+# Secret key for sessions
+app.secret_key = os.environ.get("SECRET_KEY") or os.environ.get(
+    "FLASK_SECRET_KEY", "dev-secret-key"
+)
 
-app.secret_key = os.environ["FLASK_SECRET_KEY"]
+# Database configuration
+database_url = os.environ.get("DATABASE_URL")
 
-db_filename = os.path.join(app.instance_path, "codeclip.db")
+if database_url:
+    # Production: Use PostgreSQL from Render
+    # Render provides DATABASE_URL starting with postgres://, but SQLAlchemy needs postgresql://
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///%s" % db_filename
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+    print("Using PostgreSQL database")
+else:
+    # Development: Use SQLite
+    instance_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "../instance")
+    )
+    os.makedirs(instance_path, exist_ok=True)
+    db_filename = os.path.join(instance_path, "codeclip.db")
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///%s" % db_filename
+    print("Using SQLite database")
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = True
+app.config["SQLALCHEMY_ECHO"] = os.environ.get("FLASK_ENV") != "production"
 
 db.init_app(app)
 
+# Create tables
 with app.app_context():
     db.create_all()
+    print("Database tables created successfully")
 
 
 def success_response(data, code=200):
@@ -61,6 +89,12 @@ def success_response(data, code=200):
 
 def failure_response(message, code=404):
     return json.dumps({"ok": False, "data": [], "error": message}), code
+
+
+@app.route("/")
+def health_check():
+    """Health check endpoint"""
+    return success_response({"status": "healthy", "message": "CodeClip API is running"})
 
 
 @app.route("/api/signup", methods=["POST"])
