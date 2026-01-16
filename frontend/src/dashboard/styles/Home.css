@@ -8,15 +8,16 @@
 
 .home-sidebar {
   background-color: var(--sidebar-bg);
-  border-right: 1px solid var(--border-color);
+  border-right: 2px solid var(--border-color);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
 .sidebar-header {
-  padding: 16px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 20px 16px;
+  border-bottom: 2px solid var(--border-color-light);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -24,8 +25,9 @@
 
 .sidebar-title {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
+  letter-spacing: 0.5px;
 }
 
 .sidebar-search {
@@ -35,37 +37,50 @@
 
 .sidebar-search input {
   flex: 1;
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+  padding: 10px 14px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
   font-size: 13px;
+  transition: all var(--transition-base);
+}
+
+.sidebar-search input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: var(--content-bg);
 }
 
 .snippets-list {
   list-style: none;
   overflow-y: auto;
   flex: 1;
+  padding: 8px 0;
 }
 
 .snippets-list li {
   padding: 12px 16px;
-  border-bottom: 1px solid var(--border-color);
+  margin: 4px 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all var(--transition-base);
   color: var(--text-primary);
   font-size: 14px;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .snippets-list li:hover {
-  background-color: #f0f0f0;
+  background-color: var(--hover-bg);
+  padding-left: 20px;
 }
 
 .snippets-list li.active {
-  background-color: var(--button-primary);
+  background: var(--primary-gradient);
   color: white;
+  box-shadow: var(--shadow-md);
+  padding-left: 20px;
 }
 
 .home-content {
@@ -75,18 +90,25 @@
 }
 
 .search-bar {
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 20px 24px;
+  border-bottom: 2px solid var(--border-color-light);
   background-color: var(--content-bg);
 }
 
 .search-bar input {
   width: 100%;
   max-width: 400px;
-  padding: 10px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
   font-size: 14px;
+  transition: all var(--transition-base);
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 
 .snippet-view-container {
