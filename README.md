@@ -174,5 +174,38 @@ npm run lint
 
 - Make sure the Flask backend is running before using the extension
 - The extension requires login/signup before use
-- Snippets are stored locally in the SQLite database
+- Snippets are stored in SQLite (local) or PostgreSQL (production)
 - Semantic search uses the `all-MiniLM-L6-v2` embedding model
+
+## Deployment
+
+### Backend Deployment to Render
+
+The backend is ready for deployment to Render. See [RENDER_DEPLOYMENT.md](backend/RENDER_DEPLOYMENT.md) for complete instructions.
+
+**Quick Summary:**
+
+1. Create PostgreSQL database on Render
+2. Create Web Service pointing to this repo
+3. Set Root Directory to `backend`
+4. Configure environment variables:
+   - `DATABASE_URL` (from Render Postgres)
+   - `SECRET_KEY` (random string)
+   - `ALLOWED_ORIGINS` (your extension ID)
+5. Deploy!
+
+The backend automatically:
+
+- Detects and uses PostgreSQL in production
+- Falls back to SQLite for local development
+- Creates database tables on startup
+- Handles CORS for your extension
+
+### Frontend (Extension)
+
+After deploying backend:
+
+1. Update API URL in your extension code
+2. Add production domain to `manifest.json` host_permissions
+3. Rebuild: `npm run build`
+4. Reload extension in Chrome
