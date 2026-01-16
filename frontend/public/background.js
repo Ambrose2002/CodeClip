@@ -11,7 +11,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "SAVE_SNIPPET") {
         const { title, language, source, text } = request.data;
 
-        fetch("http://127.0.0.1:8000/api/post/clip", {
+        fetch("https://codeclip-2vhz.onrender.com/api/post/clip", {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
